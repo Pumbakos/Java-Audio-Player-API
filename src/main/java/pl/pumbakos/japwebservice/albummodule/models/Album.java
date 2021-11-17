@@ -30,8 +30,8 @@ public class Album extends DBModel implements Serializable {
     private Long id;
 
     @NotBlank
-    @Column(nullable = false, name = "name", columnDefinition = "VARCHAR(50)")
-    private String name;
+    @Column(nullable = false, name = "title", columnDefinition = "VARCHAR(50)")
+    private String title;
 
     @NotBlank
     @Column(nullable = false, name = "description", columnDefinition = "VARCHAR(200)")
