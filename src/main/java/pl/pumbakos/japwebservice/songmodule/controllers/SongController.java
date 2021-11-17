@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static pl.pumbakos.japwebservice.japresources.EndPoint.*;
 import static pl.pumbakos.japwebservice.japresources.EndPoint.PathVariable.FILENAME;
 import static pl.pumbakos.japwebservice.japresources.EndPoint.PathVariable.ID;
@@ -34,39 +35,6 @@ public class SongController {
     @Autowired
     public SongController(SongService service) {
         this.service = service;
-    }
-
-    //FIXME
-    @PostMapping(consumes = "multipart/form-data", produces = "text/plain")
-    public ResponseEntity<String> upload(@RequestParam("files") List<MultipartFile> multipartFiles) {
-        String filename = StringUtils.cleanPath(Objects.requireNonNull(multipartFiles.get(0).getOriginalFilename()));
-        if (multipartFiles.size() == 1 && filename.isBlank()) {
-            return ResponseEntity.noContent().build();
-        }
-
-//        HttpHeaders httpHeaders = new HttpHeaders();
-//        httpHeaders.add("Content-Type", "multipart/form-data");
-
-        String message = service.upload(multipartFiles);
-        switch (message) {
-            case "OK"-> {
-                return ResponseEntity.ok(Status.Message.OK.toString());
-            }
-            case "BAD_EXTENSION"-> {
-                return ResponseEntity.unprocessableEntity().build();
-            }
-            case "NO_CONTENT" -> {
-                return ResponseEntity.noContent().build();
-            }
-        }
-
-        return ResponseEntity.badRequest().build();
-    }
-
-    @PutMapping(path = ID,
-            consumes = "application/json", produces = "application/json")
-    public ResponseEntity<HttpStatus> update(@Valid @RequestBody Song song, @PathVariable(name = "id") Long id) {
-        return service.update(song, id) ? ResponseEntity.ok(HttpStatus.OK) : ResponseEntity.notFound().build();
     }
 
     @SneakyThrows
@@ -82,40 +50,85 @@ public class SongController {
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.add("File-Name", filename);
             httpHeaders.add(CONTENT_DISPOSITION, "attachment;File-Name=" + resource.getFilename());
+            httpHeaders.add(CONTENT_TYPE, String.valueOf(
+                            MediaType.parseMediaType(Files.probeContentType(filePath))
+                    )
+            );
 
-            return ResponseEntity.ok().contentType(MediaType.parseMediaType(Files.probeContentType(filePath)))
-                    .headers(httpHeaders).body(resource);
+//            return ResponseEntity.ok().contentType(MediaType.parseMediaType(Files.probeContentType(filePath)))
+//                    .headers(httpHeaders).body(resource);
+
+            return new ResponseEntity<>(resource, httpHeaders, HttpStatus.OK);
         }
-        return ResponseEntity.notFound().build();
+        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
     @GetMapping(path = INFO + FILENAME,
             produces = "application/json")
     public ResponseEntity<Song> get(@PathVariable("filename") String filename) {
         Song song = service.get(filename);
-        return song == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(song);
+        return song == null ?
+                new ResponseEntity<>(null, HttpStatus.NOT_FOUND) :
+                new ResponseEntity<>(song, HttpStatus.OK);
     }
 
+    @Deprecated(forRemoval = true)
     @GetMapping(path = SIZE + FILENAME,
             produces = "text/plain")
     public ResponseEntity<Long> getFileSize(@PathVariable("filename") String filename) {
         Long fileSize = service.getFileSize(filename);
-        if (fileSize == Status.INVALID_TITLE.getCode())
-            return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(fileSize);
+        return fileSize == Status.INVALID_TITLE.getCode() ?
+                new ResponseEntity<>(Status.INVALID_TITLE.getCode(), HttpStatus.NOT_FOUND) :
+                new ResponseEntity<>(fileSize, HttpStatus.OK);
     }
 
     @GetMapping(path = ALL,
             produces = "application/json")
     public ResponseEntity<String> getTitles() {
         String titles = service.getTitles();
-        return titles.isBlank() ? ResponseEntity.noContent().build() : ResponseEntity.ok(titles);
+        return titles.isBlank() ?
+                new ResponseEntity<>("NO SONGS FOUND", HttpStatus.NOT_FOUND) :
+                new ResponseEntity<>(titles, HttpStatus.OK);
     }
 
     @GetMapping(path = INFO + ALL,
             produces = "application/json")
     public ResponseEntity<List<Song>> getAll() {
         List<Song> all = service.getAll();
-        return all == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(all);
+        return all == null ?
+                new ResponseEntity<>(null, HttpStatus.NOT_FOUND) :
+                new ResponseEntity<>(all, HttpStatus.OK);
+    }
+
+    //FIXME
+    @PostMapping(consumes = "multipart/form-data", produces = "text/plain")
+    public ResponseEntity<String> upload(@RequestParam("files") List<MultipartFile> multipartFiles) {
+        String filename = StringUtils.cleanPath(Objects.requireNonNull(multipartFiles.get(0).getOriginalFilename()));
+        if (multipartFiles.size() == 1 && filename.isBlank()) {
+            return new ResponseEntity<>(Status.Message.BAD_REQUEST.toString(), HttpStatus.BAD_REQUEST);
+        }
+
+        String message = service.upload(multipartFiles);
+        switch (message) {
+            case "OK" -> {
+                return new ResponseEntity<>(Status.Message.OK.toString(), HttpStatus.OK);
+            }
+            case "BAD_EXTENSION" -> {
+                return new ResponseEntity<>("Bad extension", HttpStatus.UNPROCESSABLE_ENTITY);
+            }
+            case "INTERNAL_ERROR" -> {
+                return new ResponseEntity<>("Error while processing request", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        return new ResponseEntity<>(Status.Message.BAD_REQUEST.toString(), HttpStatus.BAD_REQUEST);
+    }
+
+    @PutMapping(path = ID,
+            consumes = "application/json", produces = "application/json")
+    public ResponseEntity<String> update(@Valid @RequestBody Song song, @PathVariable(name = "id") Long id) {
+        return service.update(song, id) ?
+                new ResponseEntity<>("Song updated successfully", HttpStatus.OK) :
+                new ResponseEntity<>("Song not found", HttpStatus.NOT_FOUND);
     }
 }

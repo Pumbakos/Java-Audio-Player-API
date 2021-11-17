@@ -75,7 +75,7 @@ public class SongService {
             }
             return Status.Message.OK.toString();
         } catch (IOException e) {
-            return Status.Message.NO_CONTENT.toString();
+            return Status.Message.INTERNAL_ERROR.toString();
         }
     }
 

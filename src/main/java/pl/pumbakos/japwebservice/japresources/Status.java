@@ -18,7 +18,8 @@ public enum Status {
         ACCEPTED("ACCEPTED"),
         OK("OK"),
         BAD_REQUEST("BAD_REQUEST"),
-        NOT_FOUND("NOT_FOUND");
+        NOT_FOUND("NOT_FOUND"),
+        INTERNAL_ERROR("INTERNAL_ERROR");
 
         private String name;
 
