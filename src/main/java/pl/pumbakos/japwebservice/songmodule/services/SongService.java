@@ -51,6 +51,7 @@ public class SongService {
         this.defaultUtils = defaultUtils;
     }
 
+    //TODO: check if song is present
     public String upload(List<MultipartFile> multipartFiles) {
         try {
             for (MultipartFile file : multipartFiles) {
@@ -66,16 +67,17 @@ public class SongService {
                 copy(file.getInputStream(), fileStorage, REPLACE_EXISTING);
 
                 long size = file.getSize();
-                String title = filename.substring(0, filename.length() - 4);
+                String title = filename.replace(Extension.WAV, "");
 
                 song.setSize(size);
                 song.setTitle(title);
+                song.setExtension(filename.substring(filename.length() - 4));
 
                 repository.save(song);
             }
             return Status.Message.OK.toString();
         } catch (IOException e) {
-            return Status.Message.NO_CONTENT.toString();
+            return Status.Message.INTERNAL_ERROR.toString();
         }
     }
 

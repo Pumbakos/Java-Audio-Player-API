@@ -28,7 +28,7 @@ public class AlbumController {
             produces = "application/json")
     public ResponseEntity<List<Album>> getAll() {
         List<Album> all = service.getAll();
-        return all == null ? ResponseEntity.noContent().build() : ResponseEntity.ok(all);
+        return all == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(all);
     }
 
     @GetMapping(path = ID,
@@ -39,20 +39,25 @@ public class AlbumController {
     }
 
     @PostMapping(consumes = "application/json", produces = "application/json")
-    public ResponseEntity.BodyBuilder save(@Valid @RequestBody Album album) {
-        service.save(album);
-        return ResponseEntity.status(HttpStatus.CREATED);
+    public ResponseEntity<String> save(@Valid @RequestBody Album album) {
+        return service.save(album) == null ?
+                new ResponseEntity<>("Check data you have entered.", HttpStatus.BAD_REQUEST) :
+                new ResponseEntity<>("Author created successfully.", HttpStatus.OK);
     }
 
     @PutMapping(path = ID,
             consumes = "application/json", produces = "application/json")
-    public ResponseEntity<HttpStatus> update(@Valid @RequestBody Album album, @PathVariable(name = "id") Long id) {
-        return service.update(album, id) ? ResponseEntity.ok(HttpStatus.OK) : ResponseEntity.ok(HttpStatus.NOT_FOUND);
+    public ResponseEntity<String> update(@Valid @RequestBody Album album, @PathVariable(name = "id") Long id) {
+        return service.update(album, id) ?
+                new ResponseEntity<>("Updated successfully.", HttpStatus.OK) :
+                new ResponseEntity<>("Check data you have entered.", HttpStatus.BAD_REQUEST);
     }
 
     @DeleteMapping(path = ID,
             produces = "application/json")
-    public ResponseEntity<HttpStatus> delete(@PathVariable(name = "id") Long id) {
-        return service.delete(id) ? ResponseEntity.ok(HttpStatus.OK) : ResponseEntity.ok(HttpStatus.NOT_FOUND);
+    public ResponseEntity<String> delete(@PathVariable(name = "id") Long id) {
+        return service.delete(id) ?
+                new ResponseEntity<>("Deleted successfully.", HttpStatus.OK) :
+                new ResponseEntity<>("Producer not found.", HttpStatus.NOT_FOUND);
     }
 }
