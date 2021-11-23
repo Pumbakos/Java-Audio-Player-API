@@ -17,9 +17,10 @@ public enum Status {
         INVALID_TITLE("INVALID_TITLE"),
         ACCEPTED("ACCEPTED"),
         OK("OK"),
+        UPDATED("UPDATED"),
         BAD_REQUEST("BAD_REQUEST"),
         NOT_FOUND("NOT_FOUND"),
-        INTERNAL_ERROR("INTERNAL_ERROR");
+        INTERNAL_ERROR("INTERNAL_SERVER_ERROR");
 
         private String name;
 

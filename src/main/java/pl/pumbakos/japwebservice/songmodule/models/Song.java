@@ -33,9 +33,13 @@ public class Song extends DBModel implements Serializable {
     @Column(nullable = false, name = "size", columnDefinition = "INT")
     private Long size;
 
-    @NotNull
+    @NotNull(message = "We require path not to be empty, check data you entered")
     @Column(nullable = false, name = "path", columnDefinition = "VARCHAR(MAX)")
     private String path;
+
+    @NotBlank(message = "We require size not to be empty, check data you entered")
+    @Column(nullable = false, name = "extension", columnDefinition = "VARCHAR(4)")
+    private String extension;
 
     @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
