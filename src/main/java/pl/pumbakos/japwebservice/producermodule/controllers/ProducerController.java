@@ -24,18 +24,45 @@ public class ProducerController {
         this.service = service;
     }
 
+    /**
+     * Returns list of producers.
+     * @return <pre>HttpStatus.OK if list is not empty and the list as body</pre>
+     *         <pre>HttpStatus.NOT_FOUND if list is empty, null as body is returned</pre>
+     * @see HttpStatus
+     * @see List
+     */
     @GetMapping(path = ALL, produces = "application/json")
     public ResponseEntity<List<Producer>> getAll() {
         List<Producer> all = service.getAll();
-        return all == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(all);
+        return all == null ?
+                new ResponseEntity<>(null, HttpStatus.NOT_FOUND) :
+                new ResponseEntity<>(all, HttpStatus.OK);
     }
 
+    /**
+     * Returns specific producer. Producer is identified by id which is passed in path.
+     * @param id id of specific producer
+     * @return <pre>HttpStatus.OK if producer is found, producer is passed as body</pre>
+     *         <pre>HttpStatus.NOT_FOUND if producer is not found, null is passed as body</pre>
+     * @see HttpStatus
+     * @see Producer
+     */
     @GetMapping(path = ID, consumes = "application/json", produces = "application/json")
     public ResponseEntity<Producer> get(@Valid @PathVariable(name = "id") Long id) {
         Producer producer = service.get(id);
-        return producer == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(producer);
+        return producer == null ?
+                new ResponseEntity<>(null, HttpStatus.NOT_FOUND) :
+                new ResponseEntity<>(producer, HttpStatus.OK);
     }
 
+    /**
+     * Creates new producer. Producer have to be valid.
+     * @param producer producer to be created
+     * @return <pre>HttpStatus.OK if producer is created, message is passed as body</pre>
+     *         <pre>HttpStatus.BAD_REQUEST if producer is not created, message is passed as body</pre>
+     * @see HttpStatus
+     * @see Producer
+     */
     @PostMapping(consumes = "application/json")
     public ResponseEntity<String> save(@Valid @RequestBody Producer producer) {
         //TODO: make return CREATED
@@ -44,6 +71,15 @@ public class ProducerController {
                 new ResponseEntity<>("Saved successfully.", HttpStatus.OK);
     }
 
+    /**
+     * Updates producer. Producer is not required to be valid.
+     * @param producer updated data of producer
+     * @param id id of producer to be updated
+     * @return <pre>HttpStatus.OK if producer is updated, message is passed as body</pre>
+     *         <pre>HttpStatus.BAD_REQUEST if producer is not updated, message is passed as body</pre>
+     * @see HttpStatus
+     * @see Producer
+     */
     @PutMapping(path = ID, consumes = "application/json", produces = "text/plain")
     public ResponseEntity<String> update(@RequestBody Producer producer, @PathVariable(name = "id") Long id) {
         return service.update(producer, id) ?
@@ -51,10 +87,17 @@ public class ProducerController {
                 new ResponseEntity<>("Check data you have entered.", HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Hard deletes producer.
+     * @param id id of producer to be deleted
+     * @return <pre>HttpStatus.OK if producer is deleted, message is passed as body</pre>
+     *         <pre>HttpStatus.BAD_REQUEST if producer is not deleted, message is passed as body</pre>
+     * @see HttpStatus
+     */
     @DeleteMapping(path = ID, produces = "text/plain")
     public ResponseEntity<String> delete(@PathVariable(name = "id") Long id) {
         return service.delete(id) ?
                 new ResponseEntity<>("Deleted successfully.", HttpStatus.OK) :
-                new ResponseEntity<>("Producer not found.", HttpStatus.NOT_FOUND);
+                new ResponseEntity<>("Producer not found.", HttpStatus.BAD_REQUEST);
     }
 }

@@ -238,12 +238,12 @@ public class ProducerControllerTest {
     @Test
     @DisplayName("DELETE not existing producer")
     public void deleteNotExistingProducer() {
-        Mockito.when(controller.delete(Mockito.anyLong())).thenReturn(ResponseEntity.notFound().build());
+        Mockito.when(controller.delete(Mockito.anyLong())).thenReturn(ResponseEntity.badRequest().build());
 
         int status = mock.perform(delete("/producers/1"))
                 .andReturn().getResponse().getStatus();
 
-        Assertions.assertEquals(HttpStatus.NOT_FOUND.value(), status);
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), status);
     }
 
     @SneakyThrows
