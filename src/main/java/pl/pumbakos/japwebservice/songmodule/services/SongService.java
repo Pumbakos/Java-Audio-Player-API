@@ -52,6 +52,15 @@ public class SongService {
     }
 
     //TODO: check if song is present
+    /**
+     * Uploads songs to server.
+     * @param multipartFiles list of songs to be uploaded
+     * @return <pre>BAD_EXTENSION if extension is not supported</pre>
+     *         <pre>OK if all songs were uploaded</pre>
+     *         <pre>INTERNAL_ERROR if something went wrong due to server error<pre></pre>
+     * @see MultipartFile
+     * @see Status.Message
+     */
     public String upload(List<MultipartFile> multipartFiles) {
         try {
             for (MultipartFile file : multipartFiles) {
@@ -81,6 +90,12 @@ public class SongService {
         }
     }
 
+    /**
+     * Updates song under given ID.
+     * @param song new song's data
+     * @param id ID of song to update
+     * @return true if song was updated, false otherwise
+     */
     @SneakyThrows
     public boolean update(Song song, Long id) {
         updateUtils.checkIfPresents(authorRepository, song.getAuthors(), Author.class);
@@ -90,6 +105,11 @@ public class SongService {
         return updateUtils.update(repository, song, id);
     }
 
+    /**
+     * Returns path to song.
+     * @param filename name of song to be downloaded
+     * @return path to song if it exists, null otherwise
+     */
     public Resource download(String filename) {
         Optional<Song> optionalSong = repository.findByTitle(filename);
 
@@ -110,21 +130,39 @@ public class SongService {
         }
     }
 
+    /**
+     * Returns file size for specified song.
+     * @param filename name of song
+     * @return file size in bytes
+     */
     public Long getFileSize(String filename) {
         String trimmedFilename = filename.replace('_', ' ');
         Optional<Long> songSizeByName = repository.findSongSizeByName(trimmedFilename);
         return songSizeByName.orElseGet(Status.INVALID_TITLE::getCode);
     }
 
+    /**
+     * Returns all song titles as JSON list of strings.
+     * @return list of song titles
+     */
     public String getTitles() {
         return gson.toJson(repository.findAllByTitle());
     }
 
+    /**
+     * Returns specified song.
+     * @param filename name of song
+     * @return song if present, null otherwise
+     */
     public Song get(String filename) {
         Optional<Song> optionalSong = repository.findByTitle(filename);
         return optionalSong.orElse(null);
     }
 
+    /**
+     * Returns all songs.
+     * @return list of songs
+     */
     public List<Song> getAll() {
         return repository.findAll();
     }

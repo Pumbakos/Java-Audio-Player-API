@@ -21,23 +21,47 @@ public class ProducerService {
         this.producerUpdateUtils = producerUpdateUtils;
     }
 
+    /**
+     * @return List of all producers
+     */
     public List<Producer> getAll() {
         return repository.findAll();
     }
 
+    /**
+     * @param id ID of producer to get
+     * @return Producer if exists, null otherwise
+     */
     public Producer get(Long id) {
         return repository.findById(id).orElseThrow(() -> new ProducerNotFoundException(id));
     }
 
+    /**
+     * @param producer Producer to save
+     * @return Saved producer
+     */
     public Producer save(Producer producer) {
         return repository.save(producer);
     }
 
+    /**
+     * Updates producer under given ID.
+     * @param producer new producer's data
+     * @param id ID of producer to update
+     * @return true if song was updated, false otherwise.
+     */
     public boolean update(Producer producer, Long id) {
         return producerUpdateUtils.update(repository, producer, id);
     }
 
-    public boolean delete(Long id) {
+    /**
+     * Hard deletes of producer.
+     * @param id ID of producer to delete
+     * @return True if producer was deleted, otherwise throws ProducerNotFoundException
+     * @throws ProducerNotFoundException
+     * @see ProducerNotFoundException
+     */
+    public boolean delete(Long id) throws ProducerNotFoundException {
         Optional<Producer> byId = repository.findById(id);
         if(byId.isPresent()){
             repository.delete(byId.get());

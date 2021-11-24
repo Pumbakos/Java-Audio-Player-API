@@ -26,23 +26,45 @@ public class AuthorService {
         this.updateUtils = updateUtils;
     }
 
+    /**
+     * @return List of all authors
+     */
     public List<Author>getAll(){
         return repository.findAll();
     }
 
+    /**
+     * @param id ID of author to get
+     * @return Author if exists, null otherwise
+     */
     public Author get(Long id){
         Optional<Author> optionalAuthor = repository.findById(id);
         return optionalAuthor.orElse(null);
     }
 
+    /**
+     * @param author Author to save
+     * @return Saved album
+     */
     public Author save(Author author){
         return repository.save(author);
     }
 
+    /**
+     * Updates author under given ID.
+     * @param author new author's data
+     * @param id ID of author to update
+     * @return true if song was updated, false otherwise.
+     */
     public boolean update(Author author, Long id){
         return updateUtils.update(repository, author, id);
     }
 
+    /**
+     * Hard deletes of author.
+     * @param id ID of author to delete
+     * @return true if author was deleted, false otherwise
+     */
     public boolean delete(Long id){
         Optional<Author> optionalAuthor = repository.findById(id);
         if(optionalAuthor.isPresent()){
