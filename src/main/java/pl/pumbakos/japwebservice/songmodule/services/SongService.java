@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import pl.pumbakos.japwebservice.albummodule.AlbumRepository;
 import pl.pumbakos.japwebservice.authormodule.AuthorRepository;
 import pl.pumbakos.japwebservice.authormodule.models.Author;
-import pl.pumbakos.japwebservice.japresources.DefaultUtils;
+import pl.pumbakos.japwebservice.japresources.UpdateUtils;
 import pl.pumbakos.japwebservice.japresources.Extension;
 import pl.pumbakos.japwebservice.japresources.Status;
 import pl.pumbakos.japwebservice.producermodule.ProducertRepository;
@@ -37,18 +37,18 @@ public class SongService {
     private final AlbumRepository albumRepository;
     private final AuthorRepository authorRepository;
     private final ProducertRepository producerRepository;
-    private final DefaultUtils<Song> defaultUtils;
+    private final UpdateUtils<Song> updateUtils;
     private final Gson gson;
 
     @Autowired
     public SongService(SongRepository repository, AlbumRepository albumRepository, AuthorRepository authorRepository,
-                       ProducertRepository producerRepository, Gson gson, DefaultUtils<Song> defaultUtils) {
+                       ProducertRepository producerRepository, Gson gson, UpdateUtils<Song> updateUtils) {
         this.repository = repository;
         this.albumRepository = albumRepository;
         this.authorRepository = authorRepository;
         this.producerRepository = producerRepository;
         this.gson = gson;
-        this.defaultUtils = defaultUtils;
+        this.updateUtils = updateUtils;
     }
 
     //TODO: check if song is present
@@ -83,11 +83,11 @@ public class SongService {
 
     @SneakyThrows
     public boolean update(Song song, Long id) {
-        defaultUtils.checkIfPresents(authorRepository, song.getAuthors(), Author.class);
-        defaultUtils.checkIfPresent(albumRepository, song.getAlbum());
-        defaultUtils.checkIfPresent(producerRepository, song.getAlbum().getProducer());
+        updateUtils.checkIfPresents(authorRepository, song.getAuthors(), Author.class);
+        updateUtils.checkIfPresent(albumRepository, song.getAlbum());
+        updateUtils.checkIfPresent(producerRepository, song.getAlbum().getProducer());
 
-        return defaultUtils.update(repository, song, id);
+        return updateUtils.update(repository, song, id);
     }
 
     public Resource download(String filename) {

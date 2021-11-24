@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import pl.pumbakos.japwebservice.albummodule.AlbumRepository;
 import pl.pumbakos.japwebservice.authormodule.AuthorRepository;
 import pl.pumbakos.japwebservice.authormodule.models.Author;
-import pl.pumbakos.japwebservice.japresources.DefaultUtils;
+import pl.pumbakos.japwebservice.japresources.UpdateUtils;
 import pl.pumbakos.japwebservice.songmodule.SongRepository;
 
 import java.util.List;
@@ -16,14 +16,14 @@ public class AuthorService {
     private final AuthorRepository repository;
     private final AlbumRepository albumRepository;
     private final SongRepository songRepository;
-    private final DefaultUtils<Author> defaultUtils;
+    private final UpdateUtils<Author> updateUtils;
 
     @Autowired
-    public AuthorService(AuthorRepository repository, AlbumRepository albumRepository, SongRepository songRepository, DefaultUtils<Author> defaultUtils) {
+    public AuthorService(AuthorRepository repository, AlbumRepository albumRepository, SongRepository songRepository, UpdateUtils<Author> updateUtils) {
         this.repository = repository;
         this.albumRepository = albumRepository;
         this.songRepository = songRepository;
-        this.defaultUtils = defaultUtils;
+        this.updateUtils = updateUtils;
     }
 
     public List<Author>getAll(){
@@ -40,7 +40,7 @@ public class AuthorService {
     }
 
     public boolean update(Author author, Long id){
-        return defaultUtils.update(repository, author, id);
+        return updateUtils.update(repository, author, id);
     }
 
     public boolean delete(Long id){

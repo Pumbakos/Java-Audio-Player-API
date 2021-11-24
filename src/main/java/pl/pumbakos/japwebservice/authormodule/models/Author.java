@@ -8,7 +8,6 @@ import lombok.ToString;
 import pl.pumbakos.japwebservice.albummodule.models.Album;
 import pl.pumbakos.japwebservice.japresources.DBModel;
 import pl.pumbakos.japwebservice.japresources.DateFormat;
-import pl.pumbakos.japwebservice.japresources.JAPDate;
 import pl.pumbakos.japwebservice.songmodule.models.Song;
 
 import javax.persistence.*;
