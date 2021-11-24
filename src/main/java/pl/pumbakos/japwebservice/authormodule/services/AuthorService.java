@@ -6,6 +6,7 @@ import pl.pumbakos.japwebservice.albummodule.AlbumRepository;
 import pl.pumbakos.japwebservice.authormodule.AuthorRepository;
 import pl.pumbakos.japwebservice.authormodule.models.Author;
 import pl.pumbakos.japwebservice.japresources.UpdateUtils;
+import pl.pumbakos.japwebservice.japresources.exception.AuthorNotFoundException;
 import pl.pumbakos.japwebservice.songmodule.SongRepository;
 
 import java.util.List;
@@ -14,15 +15,11 @@ import java.util.Optional;
 @Service
 public class AuthorService {
     private final AuthorRepository repository;
-    private final AlbumRepository albumRepository;
-    private final SongRepository songRepository;
     private final UpdateUtils<Author> updateUtils;
 
     @Autowired
-    public AuthorService(AuthorRepository repository, AlbumRepository albumRepository, SongRepository songRepository, UpdateUtils<Author> updateUtils) {
+    public AuthorService(AuthorRepository repository, UpdateUtils<Author> updateUtils) {
         this.repository = repository;
-        this.albumRepository = albumRepository;
-        this.songRepository = songRepository;
         this.updateUtils = updateUtils;
     }
 
@@ -61,7 +58,7 @@ public class AuthorService {
     }
 
     /**
-     * Hard deletes of author.
+     * Hard delete of author.
      * @param id ID of author to delete
      * @return true if author was deleted, false otherwise
      */
@@ -71,6 +68,6 @@ public class AuthorService {
             repository.delete(optionalAuthor.get());
             return true;
         }
-        return false;
+        throw new AuthorNotFoundException(id);
     }
 }

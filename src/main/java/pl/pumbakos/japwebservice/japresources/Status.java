@@ -26,6 +26,7 @@ public enum Status {
         ACCEPTED("ACCEPTED"),
         OK("OK"),
         UPDATED("UPDATED"),
+        DELETED("DELETED"),
         BAD_REQUEST("BAD_REQUEST"),
         NOT_FOUND("NOT_FOUND"),
         INTERNAL_ERROR("INTERNAL_SERVER_ERROR");

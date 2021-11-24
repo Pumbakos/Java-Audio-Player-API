@@ -8,6 +8,7 @@ import pl.pumbakos.japwebservice.albummodule.models.Album;
 import pl.pumbakos.japwebservice.authormodule.AuthorRepository;
 import pl.pumbakos.japwebservice.authormodule.models.Author;
 import pl.pumbakos.japwebservice.japresources.UpdateUtils;
+import pl.pumbakos.japwebservice.japresources.exception.AlbumNotFoundException;
 import pl.pumbakos.japwebservice.producermodule.ProducertRepository;
 import pl.pumbakos.japwebservice.songmodule.SongRepository;
 
@@ -22,7 +23,7 @@ public class AlbumService {
     private final UpdateUtils<Album> updateUtils;
 
     @Autowired
-    public AlbumService(AlbumRepository repository, AuthorRepository authorRepository, SongRepository songRepository, ProducertRepository producertRepository, UpdateUtils<Album> updateUtils) {
+    public AlbumService(AlbumRepository repository, AuthorRepository authorRepository, ProducertRepository producertRepository, UpdateUtils<Album> updateUtils) {
         this.repository = repository;
         this.authorRepository = authorRepository;
         this.producertRepository = producertRepository;
@@ -71,7 +72,7 @@ public class AlbumService {
     }
 
     /**
-     * Hard deletes of album.
+     * Hard delete of album.
      * @param id ID of album to delete
      * @return True if album was deleted, false otherwise
      */
@@ -81,6 +82,6 @@ public class AlbumService {
             repository.delete(optionalAlbum.get());
             return true;
         }
-        return false;
+        throw new AlbumNotFoundException(id);
     }
 }

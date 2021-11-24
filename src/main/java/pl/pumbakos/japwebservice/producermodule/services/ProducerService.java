@@ -46,8 +46,9 @@ public class ProducerService {
 
     /**
      * Updates producer under given ID.
+     *
      * @param producer new producer's data
-     * @param id ID of producer to update
+     * @param id       ID of producer to update
      * @return true if song was updated, false otherwise.
      */
     public boolean update(Producer producer, Long id) {
@@ -55,16 +56,18 @@ public class ProducerService {
     }
 
     /**
-     * Hard deletes of producer.
+     * Hard delete of producer.
+     *
      * @param id ID of producer to delete
      * @return True if producer was deleted, otherwise throws ProducerNotFoundException
      * @throws ProducerNotFoundException
      * @see ProducerNotFoundException
      */
     public boolean delete(Long id) throws ProducerNotFoundException {
-        Optional<Producer> byId = repository.findById(id);
-        if(byId.isPresent()){
-            repository.delete(byId.get());
+        Optional<Producer> optionalProducer = repository.findById(id);
+
+        if (optionalProducer.isPresent()) {
+            repository.delete(optionalProducer.get());
             return true;
         }
         throw new ProducerNotFoundException(id);

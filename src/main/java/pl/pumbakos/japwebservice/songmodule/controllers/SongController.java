@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pl.pumbakos.japwebservice.japresources.Status;
+import pl.pumbakos.japwebservice.songmodule.SongNotFoundAdvice;
 import pl.pumbakos.japwebservice.songmodule.models.Song;
 import pl.pumbakos.japwebservice.songmodule.services.SongService;
 
@@ -64,9 +65,6 @@ public class SongController {
                             MediaType.parseMediaType(Files.probeContentType(filePath))
                     )
             );
-
-//            return ResponseEntity.ok().contentType(MediaType.parseMediaType(Files.probeContentType(filePath)))
-//                    .headers(httpHeaders).body(resource);
 
             return new ResponseEntity<>(resource, httpHeaders, HttpStatus.OK);
         }
@@ -202,6 +200,22 @@ public class SongController {
     public ResponseEntity<String> update(@Valid @RequestBody Song song, @PathVariable(name = "id") Long id) {
         return service.update(song, id) ?
                 new ResponseEntity<>(Status.Message.UPDATED.toString(), HttpStatus.OK) :
+                new ResponseEntity<>(Status.Message.NOT_FOUND.toString(), HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * Endpoint is used to delete specific song. <br>
+     * @param filename name of song to be deleted
+     * @return <pre>HttpStatus.OK if song was deleted successfully with DELETED message as body. </pre>
+     *         <pre>HttpStatus.NOT_FOUND if song was not found with NOT_FOUND message as body </pre>
+     *
+     * @see Status
+     * @see org.springframework.http.HttpStatus
+     */
+    @DeleteMapping(produces = "text/plain")
+    public ResponseEntity<String> delete(@RequestParam(name = "filename") String filename) {
+        return service.delete(filename) ?
+                new ResponseEntity<>(Status.Message.DELETED.toString(), HttpStatus.OK) :
                 new ResponseEntity<>(Status.Message.NOT_FOUND.toString(), HttpStatus.NOT_FOUND);
     }
 }

@@ -14,6 +14,7 @@ import pl.pumbakos.japwebservice.authormodule.models.Author;
 import pl.pumbakos.japwebservice.japresources.UpdateUtils;
 import pl.pumbakos.japwebservice.japresources.Extension;
 import pl.pumbakos.japwebservice.japresources.Status;
+import pl.pumbakos.japwebservice.japresources.exception.SongNotFoundException;
 import pl.pumbakos.japwebservice.producermodule.ProducertRepository;
 import pl.pumbakos.japwebservice.songmodule.SongRepository;
 import pl.pumbakos.japwebservice.songmodule.models.Song;
@@ -53,13 +54,15 @@ public class SongService {
 
     //TODO: check if song is present
     /**
-     * Uploads songs to server.
+     * Uploads songs to server. <br>
+     * Song must have proper extension.
      * @param multipartFiles list of songs to be uploaded
      * @return <pre>BAD_EXTENSION if extension is not supported</pre>
      *         <pre>OK if all songs were uploaded</pre>
      *         <pre>INTERNAL_ERROR if something went wrong due to server error<pre></pre>
      * @see MultipartFile
      * @see Status.Message
+     * @see Extension
      */
     public String upload(List<MultipartFile> multipartFiles) {
         try {
@@ -106,7 +109,7 @@ public class SongService {
     }
 
     /**
-     * Returns path to song.
+     * Returns path to song including one.
      * @param filename name of song to be downloaded
      * @return path to song if it exists, null otherwise
      */
@@ -165,5 +168,23 @@ public class SongService {
      */
     public List<Song> getAll() {
         return repository.findAll();
+    }
+
+    /**
+     * Deletes specified song.
+     * @param filename name of song
+     * @return true if song was deleted, false otherwise
+     */
+    public boolean delete(String filename) {
+        Optional<Song> optionalSong = repository.findByTitle(filename);
+        return optionalSong.map(song -> {
+            try {
+                Files.delete(Path.of(song.getPath()));
+                repository.delete(song);
+                return true;
+            } catch (IOException e) {
+                return false;
+            }
+        }).orElseThrow(SongNotFoundException::new);
     }
 }
