@@ -1,5 +1,6 @@
 package pl.pumbakos.japwebservice.generators;
 
+import pl.pumbakos.japwebservice.albummodule.models.Album;
 import pl.pumbakos.japwebservice.songmodule.models.Song;
 
 import java.util.List;
@@ -36,6 +37,7 @@ public class SongGenerator {
         song.setTitle("");
         song.setPath("");
         song.setAuthors(List.of());
+        song.setAlbum(new Album());
 
         return song;
     }

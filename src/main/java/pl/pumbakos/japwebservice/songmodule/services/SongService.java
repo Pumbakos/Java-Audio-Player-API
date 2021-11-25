@@ -31,7 +31,7 @@ import java.util.Optional;
 import static java.nio.file.Files.copy;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
-@Service
+@Service(value = "JAPSongService")
 public class SongService {
     private static final String DIRECTORY = System.getProperty("user.home") + "/Downloads/";
     private final SongRepository repository;
