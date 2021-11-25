@@ -116,7 +116,7 @@ public class SongController {
      * <pre>HttpStatus.NOT_FOUND otherwise</pre>
      * @see org.springframework.http.HttpStatus
      */
-    @GetMapping(path = INFO,
+    @GetMapping(path = INFO + ALL,
             produces = "application/json")
     public ResponseEntity<List<Song>> getAll() {
         List<Song> all = service.getAll();

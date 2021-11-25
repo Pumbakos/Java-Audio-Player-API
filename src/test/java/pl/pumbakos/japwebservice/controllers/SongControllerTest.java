@@ -90,25 +90,26 @@ public class SongControllerTest {
         Assertions.assertEquals(HttpStatus.NOT_FOUND.value(), status);
     }
 
-//    @Test
-//    @DisplayName("GET all titles")
-//    @SneakyThrows
-//    public void getAllTitles(){
-//        Mockito.when(controller.getTitles()).thenReturn(ResponseEntity.ok(Mockito.any(String.class)));
-//        int status = mock.perform(get("/songs/all/"))
-//                .andReturn().getResponse().getStatus();
-//
-//        Assertions.assertEquals(HttpStatus.OK.value(), status);
-//    }
-//
-//    @Test
-//    @DisplayName("GET all titles - empty")
-//    @SneakyThrows
-//    public void getAllTitlesEmpty(){
-//        Mockito.when(controller.getTitles()).thenReturn(ResponseEntity.notFound().build());
-//        int status = mock.perform(get("/songs/all/"))
-//                .andReturn().getResponse().getStatus();
-//
-//        Assertions.assertEquals(HttpStatus.NOT_FOUND.value(), status);
-//    }
+    @Test
+    @DisplayName("GET all titles")
+    @SneakyThrows
+    public void getAllTitles(){
+
+        Mockito.when(controller.getTitles()).thenReturn(ResponseEntity.ok().build());
+        int status = mock.perform(get("/songs/all/"))
+                .andReturn().getResponse().getStatus();
+
+        Assertions.assertEquals(HttpStatus.OK.value(), status);
+    }
+
+    @Test
+    @DisplayName("GET all titles - empty")
+    @SneakyThrows
+    public void getAllTitlesEmpty(){
+        Mockito.when(controller.getTitles()).thenReturn(ResponseEntity.notFound().build());
+        int status = mock.perform(get("/songs/all/"))
+                .andReturn().getResponse().getStatus();
+
+        Assertions.assertEquals(HttpStatus.NOT_FOUND.value(), status);
+    }
 }
