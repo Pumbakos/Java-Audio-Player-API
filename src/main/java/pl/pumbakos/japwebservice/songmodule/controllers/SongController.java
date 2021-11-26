@@ -197,8 +197,7 @@ public class SongController {
      * @see Status
      * @see org.springframework.http.HttpStatus
      */
-    @PutMapping(path = ID,
-            consumes = "application/json", produces = "application/json")
+    @PutMapping(path = ID, consumes = "application/json", produces = "text/plain")
     public ResponseEntity<String> update(@Valid @RequestBody Song song, @PathVariable(name = "id") Long id) {
         return service.update(song, id) ?
                 new ResponseEntity<>(Status.Message.UPDATED.toString(), HttpStatus.OK) :

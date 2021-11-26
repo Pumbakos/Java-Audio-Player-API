@@ -52,7 +52,6 @@ public class SongService {
         this.updateUtils = updateUtils;
     }
 
-    //TODO: check if song is present
     /**
      * Uploads songs to server. <br>
      * Song must have proper extension.
@@ -64,6 +63,8 @@ public class SongService {
      * @see Status.Message
      * @see Extension
      */
+    //TODO: check if song is present
+    //FIXME: check for single file's extension
     public String upload(List<MultipartFile> multipartFiles) {
         try {
             for (MultipartFile file : multipartFiles) {
