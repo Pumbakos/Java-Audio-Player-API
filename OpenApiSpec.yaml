@@ -755,7 +755,7 @@ paths:
       consumes:
         - application/json
       produces:
-        - application/json
+        - text/plain
       parameters:
         - name: id
           in: path
