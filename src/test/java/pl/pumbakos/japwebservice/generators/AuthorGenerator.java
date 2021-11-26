@@ -1,7 +1,7 @@
 package pl.pumbakos.japwebservice.generators;
 
 import pl.pumbakos.japwebservice.authormodule.models.Author;
-import pl.pumbakos.japwebservice.japresources.JAPDate;
+import pl.pumbakos.japwebservice.japresources.DateParser;
 
 //yyyy-MM-dd'T'HH:mm:ss.SSS
 public class AuthorGenerator {
@@ -10,7 +10,7 @@ public class AuthorGenerator {
         author.setName("interest");
         author.setSurname("why");
         author.setNickname("hour");
-        author.setDateOfBirth(JAPDate.of("2000-04-13T5:40:21.000"));
+        author.setDateOfBirth(DateParser.of("2000-04-13T5:40:21.000"));
 
         return author;
     }
@@ -20,7 +20,7 @@ public class AuthorGenerator {
         author.setName("support");
         author.setSurname("verb");
         author.setNickname("visitor");
-        author.setDateOfBirth(JAPDate.of("2003-02-25T7:14:43.000"));
+        author.setDateOfBirth(DateParser.of("2003-02-25T7:14:43.000"));
 
         return author;
     }
@@ -30,7 +30,7 @@ public class AuthorGenerator {
         author.setName("");
         author.setSurname("");
         author.setNickname("");
-        author.setDateOfBirth(JAPDate.of(""));
+        author.setDateOfBirth(DateParser.of(""));
 
         return author;
     }

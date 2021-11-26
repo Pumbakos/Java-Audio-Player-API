@@ -53,20 +53,12 @@ public class AlbumControllerTest {
     @SneakyThrows
     @DisplayName("GET all albums")
     public void getAllAlbums() {
-        Album completeAlbum = AlbumGenerator.createCompleteAlbum();
-        Album anotherCompleteAlbum = AlbumGenerator.createAnotherCompleteAlbum();
+        Mockito.when(controller.getAll()).thenReturn(ResponseEntity.ok().build());
 
-        List<Album> albums = Arrays.asList(completeAlbum, anotherCompleteAlbum);
+        int status = mock.perform(get("/albums/all"))
+                .andReturn().getResponse().getStatus();
 
-        Mockito.when(controller.getAll()).thenReturn(ResponseEntity.ok(albums));
-
-        String contentAsString = mock.perform(get("/albums/all"))
-                .andReturn().getResponse().getContentAsString();
-
-        List<Album> result = mapper.readValue(contentAsString, new TypeReference<>() {});
-
-        Assertions.assertEquals(completeAlbum.getId(), result.get(0).getId());
-        Assertions.assertEquals(anotherCompleteAlbum.getId(), result.get(1).getId());
+        Assertions.assertEquals(HttpStatus.OK.value(), status);
     }
 
     @Test
@@ -85,9 +77,7 @@ public class AlbumControllerTest {
     @SneakyThrows
     @DisplayName("GET existing author")
     public void getExistingAlbum() {
-        Album completeAlbum = AlbumGenerator.createCompleteAlbum();
-
-        Mockito.when(controller.get(Mockito.anyLong())).thenReturn(ResponseEntity.ok(completeAlbum));
+        Mockito.when(controller.get(Mockito.anyLong())).thenReturn(ResponseEntity.ok().build());
 
         int status = mock.perform(get("/albums/1"))
                 .andReturn().getResponse().getStatus();

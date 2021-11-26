@@ -12,6 +12,5 @@ public class EndPoint {
     public static class PathVariable {
         public static final String FILENAME = "/{filename}";
         public final static String ID = "/{id}";
-        public final static String SONG_ID = "/{songId}";
     }
 }

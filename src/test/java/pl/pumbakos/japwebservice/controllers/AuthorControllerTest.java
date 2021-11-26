@@ -53,20 +53,12 @@ public class AuthorControllerTest {
     @SneakyThrows
     @DisplayName("GET all authors")
     public void getAllAuthors() {
-        Author completeAuthor = AuthorGenerator.createCompleteAuthor();
-        Author anotherCompleteAuthor = AuthorGenerator.createAnotherCompleteAuthor();
+        Mockito.when(controller.getAll()).thenReturn(ResponseEntity.ok().build());
 
-        List<Author> authors = Arrays.asList(completeAuthor, anotherCompleteAuthor);
+        int status = mock.perform(get("/authors/all"))
+                .andReturn().getResponse().getStatus();
 
-        Mockito.when(controller.getAll()).thenReturn(ResponseEntity.ok(authors));
-
-        String contentAsString = mock.perform(get("/authors/all"))
-                .andReturn().getResponse().getContentAsString();
-
-        List<Author> result = mapper.readValue(contentAsString, new TypeReference<>() {});
-
-        Assertions.assertEquals(completeAuthor.getId(), result.get(0).getId());
-        Assertions.assertEquals(anotherCompleteAuthor.getId(), result.get(1).getId());
+        Assertions.assertEquals(HttpStatus.OK.value(), status);
     }
 
     @Test
@@ -85,9 +77,7 @@ public class AuthorControllerTest {
     @SneakyThrows
     @DisplayName("GET existing author")
     public void getExistingAuthor() {
-        Author completeAuthor = AuthorGenerator.createCompleteAuthor();
-
-        Mockito.when(controller.get(Mockito.anyLong())).thenReturn(ResponseEntity.ok(completeAuthor));
+        Mockito.when(controller.get(Mockito.anyLong())).thenReturn(ResponseEntity.ok().build());
 
         int status = mock.perform(get("/authors/1"))
                 .andReturn().getResponse().getStatus();

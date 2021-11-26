@@ -1,7 +1,7 @@
 package pl.pumbakos.japwebservice.generators;
 
 import pl.pumbakos.japwebservice.albummodule.models.Album;
-import pl.pumbakos.japwebservice.japresources.JAPDate;
+import pl.pumbakos.japwebservice.japresources.DateParser;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -33,7 +33,7 @@ public class AlbumGenerator {
         Album album = new Album();
         album.setTitle("");
         album.setDescription("");
-        album.setReleaseDate(JAPDate.of(""));
+        album.setReleaseDate(DateParser.of(""));
 
         return album;
     }

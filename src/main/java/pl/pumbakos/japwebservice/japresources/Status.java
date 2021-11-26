@@ -1,5 +1,9 @@
 package pl.pumbakos.japwebservice.japresources;
 
+/**
+ * Represents the status codes of the operation. <br>
+ * Used to unify communication between the client and the server.
+ */
 public enum Status {
     BAD_EXTENSION(-1),
     NO_CONTENT(-2),
@@ -11,6 +15,10 @@ public enum Status {
         this.code = code;
     }
 
+    /**
+     * Represents the status massages of the operation. <br>
+     * Used to unify communication between the client and the server.
+     */
     public enum Message{
         NO_CONTENT("NO_CONTENT"),
         BAD_EXTENSION("BAD_EXTENSION"),
@@ -18,6 +26,7 @@ public enum Status {
         ACCEPTED("ACCEPTED"),
         OK("OK"),
         UPDATED("UPDATED"),
+        DELETED("DELETED"),
         BAD_REQUEST("BAD_REQUEST"),
         NOT_FOUND("NOT_FOUND"),
         INTERNAL_ERROR("INTERNAL_SERVER_ERROR");

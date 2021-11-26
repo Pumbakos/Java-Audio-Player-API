@@ -47,8 +47,8 @@ public class ProducerController {
      * @see HttpStatus
      * @see Producer
      */
-    @GetMapping(path = ID, consumes = "application/json", produces = "application/json")
-    public ResponseEntity<Producer> get(@Valid @PathVariable(name = "id") Long id) {
+    @GetMapping(path = ID, produces = "application/json")
+    public ResponseEntity<Producer> get(@PathVariable(name = "id") Long id) {
         Producer producer = service.get(id);
         return producer == null ?
                 new ResponseEntity<>(null, HttpStatus.NOT_FOUND) :

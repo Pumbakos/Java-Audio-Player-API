@@ -29,7 +29,7 @@ import static pl.pumbakos.japwebservice.japresources.EndPoint.*;
 import static pl.pumbakos.japwebservice.japresources.EndPoint.PathVariable.ID;
 
 @MultipartConfig(maxFileSize = 104857600, maxRequestSize = 1048576000)
-@RestController
+@RestController(value = "JAPSongController")
 @RequestMapping(SONGS)
 public class SongController {
     private final SongService service;
@@ -44,13 +44,13 @@ public class SongController {
      *
      * @param filename song title without extension i.e. if song is named "song.wav" then filename is "song"
      * @return <pre>HttpStatus.OK if song was found successfully.</pre>
-     *         <pre>HttpStatus.NOT_FOUND otherwise.</pre>
-     * @throws IOException if file is not found on client's side or file is not readable or dur to internal error
+     * <pre>HttpStatus.NOT_FOUND otherwise.</pre>
+     * @throws IOException if file is not found on client's side or file is not readable or due to internal error
      * @see org.springframework.http.HttpStatus
      */
     @SneakyThrows(IOException.class)
     @GetMapping
-    public ResponseEntity<Resource> download(@RequestParam("filename") String filename) {
+    public ResponseEntity<Resource> download(@RequestParam("filename") String filename) throws IOException {
         Song song = service.get(filename);
         Path filePath = Path.of(song.getPath());
 
@@ -65,21 +65,20 @@ public class SongController {
                     )
             );
 
-//            return ResponseEntity.ok().contentType(MediaType.parseMediaType(Files.probeContentType(filePath)))
-//                    .headers(httpHeaders).body(resource);
-
             return new ResponseEntity<>(resource, httpHeaders, HttpStatus.OK);
         }
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
     //TODO: add playlist functionality
+
     /**
      * Endpoint is to be updated in future versions to return list of songs for a specific author, album, producer or playlist.
-     *
+     * <p>
      * Returns list of all song's titles.
+     *
      * @return <pre>HttpStatus.OK if songs were found successfully with list of song's titles as body.</pre>
-     *         <pre>HttpStatus.NOT_FOUND with message as body otherwise.</pre>
+     * <pre>HttpStatus.NOT_FOUND with message as body otherwise.</pre>
      * @see pl.pumbakos.japwebservice.japresources.Status
      * @see org.springframework.http.HttpStatus
      */
@@ -94,11 +93,11 @@ public class SongController {
 
     /**
      * Returns details for a specific song.
-     * 
-     * @see Song
+     *
      * @param filename song title without extension i.e. if song is named "song.wav" then filename is "song"
      * @return <pre>HttpStatus.OK if song was found successfully with song details as body.</pre>
-     *         <pre>HttpStatus.NOT_FOUND otherwise.</pre>
+     * <pre>HttpStatus.NOT_FOUND otherwise.</pre>
+     * @see Song
      * @see org.springframework.http.HttpStatus
      */
     @GetMapping(path = INFO,
@@ -112,9 +111,9 @@ public class SongController {
 
     /**
      * Returns list of all song's details.
-     * 
+     *
      * @return <pre>HttpStatus.OK if songs were found successfully with list of song's details as body</pre>
-     *         <pre>HttpStatus.NOT_FOUND otherwise</pre>
+     * <pre>HttpStatus.NOT_FOUND otherwise</pre>
      * @see org.springframework.http.HttpStatus
      */
     @GetMapping(path = INFO + ALL,
@@ -127,15 +126,15 @@ public class SongController {
     }
 
     /**
-     * @deprecated use {@link #get(String filename)} instead and get size from {@link Song#getSize()} <br><br>
-     * Endpoint is to be removed in future versions. <br>
-     * Return size for a specific song
      * @param filename song title without extension i.e. <br> if song is named "song.wav" then filename is "song"
      *                 <br> if song is named "other song.wav " then filename is "other_song"
      * @return <pre>HttpStatus.OK if song was found successfully with song size as body.</pre>
-     *         <pre>HttpStatus.NOT_FOUND otherwise with INVALID_TITLE status code as body.</pre>
+     * <pre>HttpStatus.NOT_FOUND otherwise with INVALID_TITLE status code as body.</pre>
      * @see pl.pumbakos.japwebservice.japresources.Status
      * @see org.springframework.http.HttpStatus
+     * @deprecated use {@link #get(String filename)} instead and get size from {@link Song#getSize()} <br><br>
+     * Endpoint is to be removed in future versions. <br>
+     * Return size for a specific song
      */
     @Deprecated(forRemoval = true)
     @GetMapping(path = SIZE,
@@ -151,12 +150,13 @@ public class SongController {
      * Endpoint is used to upload audio files to the server. Currently, only .wav files are supported.<br><br>
      * Specific key is used to identify whether file is to be uploaded or not. <br>Currently, only "files" is supported
      * but in future versions dynamic key will be used.
+     *
      * @param multipartFiles list of files to be uploaded.<br>
      *                       Currently, max size of file is 100 MB and max size of request is 1000 MB
      * @return <pre>HttpStatus.OK if files were uploaded successfully with OK message as body. </pre>
-     *         <pre>HttpsStatus.BAD_REQUEST if list of files is empty with BAD_REQUEST message as body </pre>
-     *         <pre>HttpStatus.UNPROCESSABLE_ENTITY if files were not uploaded successfully due to bad extension with BAD_EXTENSION message as body </pre>
-     *         <pre>HttpStatus.INTERNAL_SERVER_ERROR if files IOException occurred with INTERNAL_ERROR message as body</pre>
+     * <pre>HttpsStatus.BAD_REQUEST if list of files is empty with BAD_REQUEST message as body </pre>
+     * <pre>HttpStatus.UNPROCESSABLE_ENTITY if files were not uploaded successfully due to bad extension with BAD_EXTENSION message as body </pre>
+     * <pre>HttpStatus.INTERNAL_SERVER_ERROR if files IOException occurred with INTERNAL_ERROR message as body</pre>
      * @see org.springframework.http.HttpStatus
      * @see pl.pumbakos.japwebservice.japresources.Status
      * @see org.springframework.web.multipart.MultipartFile
@@ -188,20 +188,35 @@ public class SongController {
     /**
      * Endpoint is used to update specific song's data. <br>
      * Valid Song object is required. <br>
-     * @param song valid song object with updated data
-     * @param id id of song to be updated
-     * @return <pre>HttpStatus.OK if song was updated successfully with UPDATED message as body. </pre>
-     *         <pre>HttpStatus.NOT_FOUND if song was not found with NOT_FOUND message as body </pre>
      *
+     * @param song valid song object with updated data
+     * @param id   id of song to be updated
+     * @return <pre>HttpStatus.OK if song was updated successfully with UPDATED message as body. </pre>
+     * <pre>HttpStatus.NOT_FOUND if song was not found with NOT_FOUND message as body </pre>
      * @see Song
      * @see Status
      * @see org.springframework.http.HttpStatus
      */
-    @PutMapping(path = ID,
-            consumes = "application/json", produces = "application/json")
+    @PutMapping(path = ID, consumes = "application/json", produces = "text/plain")
     public ResponseEntity<String> update(@Valid @RequestBody Song song, @PathVariable(name = "id") Long id) {
         return service.update(song, id) ?
                 new ResponseEntity<>(Status.Message.UPDATED.toString(), HttpStatus.OK) :
+                new ResponseEntity<>(Status.Message.NOT_FOUND.toString(), HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * Endpoint is used to delete specific song. <br>
+     *
+     * @param filename name of song to be deleted
+     * @return <pre>HttpStatus.OK if song was deleted successfully with DELETED message as body. </pre>
+     * <pre>HttpStatus.NOT_FOUND if song was not found with NOT_FOUND message as body </pre>
+     * @see Status
+     * @see org.springframework.http.HttpStatus
+     */
+    @DeleteMapping(produces = "text/plain")
+    public ResponseEntity<String> delete(@RequestParam(name = "filename") String filename) {
+        return service.delete(filename) ?
+                new ResponseEntity<>(Status.Message.DELETED.toString(), HttpStatus.OK) :
                 new ResponseEntity<>(Status.Message.NOT_FOUND.toString(), HttpStatus.NOT_FOUND);
     }
 }

@@ -11,15 +11,18 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class DefaultUtils<S extends DBModel> {
+public class UpdateUtils<S extends DBModel> {
+    /**
+     * Return s true if given field is updatable, false otherwise
+     *
+     * @param field field to check update-ability
+     * @return true if given field is updatable, false otherwise
+     */
     private static boolean isColumnUpdatable(Field field) {
-        if (field.getAnnotation(Column.class) != null
+        return field.getAnnotation(Column.class) != null
                 && field.getAnnotation(Column.class).nullable()
                 && field.getAnnotation(Column.class).insertable()
-                && field.getAnnotation(Column.class).updatable()) {
-            return true;
-        }
-        return false;
+                && field.getAnnotation(Column.class).updatable();
     }
 
     /**
@@ -69,6 +72,15 @@ public class DefaultUtils<S extends DBModel> {
         return false;
     }
 
+    /**
+     * Checks if given object is present in given repository if not saves it. <br>
+     * Method is used while saving new object to check if object is present in repository.
+     *
+     * @param repository repository that extends JpaRepository and stores given type of object S
+     * @param object     object that is checked if it is present in repository
+     * @throws ObjectHasWrongIdException if object has wrong ID
+     * @see JpaRepository
+     */
     public <S extends DBModel> void checkIfPresent(JpaRepository<S, Long> repository, S object) throws ObjectHasWrongIdException {
         if (object == null)
             throw new NullPointerException("Object is null");
@@ -81,6 +93,16 @@ public class DefaultUtils<S extends DBModel> {
             throw new ObjectHasWrongIdException("Object " + object + "has wrong ID\nIt cannot be identified");
     }
 
+    /**
+     * Checks if given list of objects is present in given repository if not saves it. <br>
+     * Method is used while saving new object to check if some objects are present in repository.
+     *
+     * @param repository repository that extends JpaRepository and stores given type of object S
+     * @param objects    list of objects that is checked if they are present in repository
+     * @param clazz      class of objects in list - helpful for exception message
+     * @param <S>        type of objects in list
+     * @throws ObjectHasWrongIdException if object has wrong ID
+     */
     public <S extends DBModel> void checkIfPresents(JpaRepository<S, Long> repository, List<S> objects, Class<S> clazz) throws ObjectHasWrongIdException {
         if (objects == null || objects.isEmpty())
             throw new NullPointerException("List of " + clazz + " is blank or empty");

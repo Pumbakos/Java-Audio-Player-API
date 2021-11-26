@@ -41,21 +41,12 @@ public class ProducerControllerTest {
     @Test
     @DisplayName("GET all producers")
     public void getAllProducers() {
-        Producer completeProducer = ProducerGenerator.createCompleteProducer();
-        Producer anotherCompleteProducer = ProducerGenerator.createAnotherCompleteProducer();
+        Mockito.when(controller.getAll()).thenReturn(ResponseEntity.ok().build());
 
-        List<Producer> producers = Arrays.asList(completeProducer, anotherCompleteProducer);
+        int status = mock.perform(get("/producers/all"))
+                .andReturn().getResponse().getStatus();
 
-        Mockito.when(controller.getAll()).thenReturn(ResponseEntity.ok(producers));
-
-        String contentAsString = mock.perform(get("/producers/all"))
-                .andReturn().getResponse().getContentAsString();
-
-        List<Producer> resultVacation = mapper.readValue(contentAsString, new TypeReference<>() {
-        });
-
-        Assertions.assertEquals(completeProducer.getId(), resultVacation.get(0).getId());
-        Assertions.assertEquals(anotherCompleteProducer.getId(), resultVacation.get(1).getId());
+        Assertions.assertEquals(HttpStatus.OK.value(), status);
     }
 
     @SneakyThrows
@@ -87,12 +78,9 @@ public class ProducerControllerTest {
     @Test
     @DisplayName("GET existing producer")
     public void getExistingProducer() {
-        Producer completeProducer = ProducerGenerator.createCompleteProducer();
+        Mockito.when(controller.get(Mockito.anyLong())).thenReturn(ResponseEntity.ok().build());
 
-        Mockito.when(controller.get(Mockito.anyLong())).thenReturn(ResponseEntity.ok(completeProducer));
-
-        int status = mock.perform(get("/producers/1")
-                        .contentType(MediaType.APPLICATION_JSON))
+        int status = mock.perform(get("/producers/1"))
                 .andReturn().getResponse().getStatus();
 
         Assertions.assertEquals(HttpStatus.OK.value(), status);
